@@ -14,13 +14,27 @@
     <canvas class="webgl"></canvas>
 
     <nav>
-      <a href="/">Spehere</a>
+
       <ul>
         <li>Explore</li>
       </ul>
-    </nav>
+      <button class="btnSearch">Try Again</button>
 
+
+      <form action="http://localhost:3000/traceroute" method="post" class="form">
+        <input placeholder="Type a domain" class="input" type="text" name="domain" id="domain">
+  <!--      <label id="placeholder" for="domain" class="form__label">Domain</label>-->
+  <!--      <button type="button">Search</button>-->
+      </form>
+    </nav>
     <h1 class="title">Trace IP</h1>
+
     <script type="module" src="./main.js"></script>
+
+    <script>
+      const input = document.querySelector('#domain');
+      const btn = document.querySelector('button')
+      const form = document.querySelector('form')
+    </script>
   </body>
 </html>
