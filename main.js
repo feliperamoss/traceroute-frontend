@@ -133,12 +133,6 @@ function getCurve(p1, p2) {
     mesh.name = 'line'
     lines.push(mesh)
     scene.add(mesh);
-
-    // if(!scene.getObjectByName('line')){
-    //     scene.add(mesh);
-    // } else{
-    //     mesh.updateMorphTargets()
-    // }
 }
 
 const connectIps = (coordinates) => {
@@ -170,7 +164,6 @@ function refresh(){
     })
 }
 
-
 const getCoordinates = async () => {
     const input = document.querySelector('#domain')
     const form = document.querySelector('form')
@@ -178,7 +171,6 @@ const getCoordinates = async () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault()
 
-        // input.disabled = 'disabled'
         btn.style.display = 'block'
         const url = 'http://localhost:3000/traceroute?domain=' + input.value; //A local page
 
@@ -203,6 +195,7 @@ const getCoordinates = async () => {
         }
         xmlHttp.open("GET", url, true); // true for asynchronous
         xmlHttp.send(null);
+        controls.autoRotate = true;
     });
 }
 
