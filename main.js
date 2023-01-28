@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import gsap from "gsap";
 import { Points } from 'three';
 import { get } from 'svelte/store';
+import {reference} from "three/nodes";
 
 //Scene
 const scene = new THREE.Scene();
@@ -87,6 +88,8 @@ function convertCoordinates(coordinate) {
     return { x, y, z }
 }
 
+let points = [];
+
 function createPin(coordinates) {
     let meshPin;
     mesh.name = "pin";
@@ -101,9 +104,11 @@ function createPin(coordinates) {
 
         meshPin.position.set(pos.x, pos.y, pos.z);
         scene.add(meshPin);
+        points.push(meshPin);
     }
 }
 
+let lines = [];
 function getCurve(p1, p2) {
     let points = [];
     let pos = convertCoordinates(p1);
@@ -126,18 +131,13 @@ function getCurve(p1, p2) {
     });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = 'line'
+    lines.push(mesh)
     scene.add(mesh);
 
-    if(!scene.getObjectByName('line')){
-        scene.add(mesh);
-    } else{
-        mesh.updateMorphTargets()
-    }
-    // else{
-    //     mesh.geometry.dispose();
-    //     mesh.material.dispose();
-    //     scene.remove( mesh );
+    // if(!scene.getObjectByName('line')){
     //     scene.add(mesh);
+    // } else{
+    //     mesh.updateMorphTargets()
     // }
 }
 
@@ -145,7 +145,7 @@ const connectIps = (coordinates) => {
      coordinates.forEach((e,i,src)=> {
         if(src.length !== i + 1) {
             console.log(e)
-            return getCurve(e, src[i+1])
+            getCurve(e, src[i+1])
         }
     })
 }
@@ -153,13 +153,21 @@ const connectIps = (coordinates) => {
 const btn = document.querySelector('.btnSearch');
 
 btn.addEventListener('click', (e) => {
-    window.location.reload();
+    // window.location.reload();
+    refresh()
 })
 
 function refresh(){
-    return document.querySelector('.canvas').reload();
-    // const  content = container.innerHTML;
-    // container.innerHTML = content;
+    console.log('reload function')
+
+    points.forEach((e,i,src)=> {
+            console.log(e)
+            scene.remove(e);
+    })
+
+    lines.forEach((e) => {
+        scene.remove(e)
+    })
 }
 
 
@@ -169,6 +177,7 @@ const getCoordinates = async () => {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault()
+
         // input.disabled = 'disabled'
         btn.style.display = 'block'
         const url = 'http://localhost:3000/traceroute?domain=' + input.value; //A local page
@@ -185,6 +194,7 @@ const getCoordinates = async () => {
                         return [{'lat': e.lat, 'lon': e.lon}]
                     }
                 })
+
                 createPin(locations)
                 connectIps(locations)
 
@@ -193,7 +203,6 @@ const getCoordinates = async () => {
         }
         xmlHttp.open("GET", url, true); // true for asynchronous
         xmlHttp.send(null);
-        refresh();
     });
 }
 
